@@ -14,7 +14,7 @@ CREATE TABLE stores (
     store_id SERIAL PRIMARY KEY,
     address VARCHAR(255) NOT NULL,
     city VARCHAR(100) NOT NULL,
-    phone_number VARCHAR(50) UNIQUE NOT NULL,
+    phone_number VARCHAR(20) UNIQUE NOT NULL,
     opened_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

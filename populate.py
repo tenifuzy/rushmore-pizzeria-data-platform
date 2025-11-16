@@ -63,7 +63,7 @@ def insert_stores(conn):
         stores.append((fake.street_address(), fake.city(), fake.phone_number()))
     with conn.cursor() as cur:
         execute_values(cur,
-            "INSERT INTO stores (address, city, phone_number) VALUES %s RETURNING store_id",
+            "INSERT INTO stores (address, city, phone_number) VALUES %s",
             stores
         )
         conn.commit()
