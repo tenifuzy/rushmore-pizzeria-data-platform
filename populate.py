@@ -1,11 +1,10 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 populate.py
 Populate the RushMore PostgreSQL database with realistic fake data using Faker.
 
 Reads DB credentials from environment variables or a .env file.
 
-Author: Generated for user
 """
 
 import os
