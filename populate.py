@@ -60,7 +60,7 @@ def truncate_tables(conn):
 def insert_stores(conn):
     stores = []
     for _ in range(NUM_STORES):
-        stores.append((fake.street_address(), fake.city(), fake.phone_number()))
+        stores.append((fake.street_address(), fake.city(), fake.phone_number()[:20]))
     with conn.cursor() as cur:
         execute_values(cur,
             "INSERT INTO stores (address, city, phone_number) VALUES %s",
@@ -136,7 +136,7 @@ def insert_customers(conn):
         fn = fake.first_name()
         ln = fake.last_name()
         email = f"{fn.lower()}.{ln.lower()}{random.randint(1,9999)}@{fake.free_email_domain()}"
-        customers.append((fn, ln, email, fake.phone_number()))
+        customers.append((fn, ln, email, fake.phone_number()[:20]))
     with conn.cursor() as cur:
         execute_values(cur,
             "INSERT INTO customers (first_name, last_name, email, phone_number) VALUES %s",
