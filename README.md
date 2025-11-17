@@ -274,8 +274,37 @@ Expected data volumes:
 *Successfully created database tables in PostgreSQL following the schema design*
 
 ### Data Population Process
-![Data Population](screenshot/data_population1.png)
+![Data Population 1](screenshot/data_population1.png)
 *Python populate.py script successfully inserting sample data into the database*
+
+![Data Population](screenshot/data_population.png.png)
+*Additional data population process screenshot*
+
+### Database Query Results
+
+#### Stores Table
+![Stores Query](screenshot/Query-stores.png)
+*Sample data from the stores table showing pizzeria locations*
+
+#### Customers Table
+![Customers Query](screenshot/Quesry-customers.png)
+*Customer data with profiles and contact information*
+
+#### Menu Items Table
+![Menu Items Query](screenshot/Query-menu-items.png)
+*Pizza menu items with categories and sizes*
+
+#### Ingredients Table
+![Ingredients Query](screenshot/Query-ingredients.png)
+*Ingredient inventory with stock quantities and units*
+
+#### Orders Table
+![Orders Query](screenshot/Query-orders.png)
+*Order records with timestamps and total amounts*
+
+#### Item Ingredients Junction Table
+![Item Ingredients Query](screenshot/Query-item-ingredients.png)
+*Many-to-many relationship between menu items and ingredients*
 
 ### Looker Studio Setup & Integration
 ![Looker Setup](screenshot/looker_setup.png)
