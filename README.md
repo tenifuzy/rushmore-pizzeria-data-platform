@@ -274,7 +274,7 @@ Expected data volumes:
 *Successfully created database tables in PostgreSQL following the schema design*
 
 ### Data Population Process
-![Data Population](screenshot/data_population.png)
+![Data Population](screenshot/data_population1.png)
 *Python populate.py script successfully inserting sample data into the database*
 
 ### Looker Studio Setup & Integration
