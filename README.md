@@ -10,6 +10,8 @@ A comprehensive data engineering capstone project that demonstrates the complete
 - [Entity Relationship Diagram (ERD)](#entity-relationship-diagram-erd)
 - [Setup Instructions](#setup-instructions)
 - [Deployment Guide](#deployment-guide)
+- [Screenshots & Visuals](#screenshots--visuals)
+- [Business Analytics](#business-analytics)
 - [Data Visualization](#data-visualization)
 - [Troubleshooting](#troubleshooting)
 - [Technologies Used](#technologies-used)
@@ -283,6 +285,105 @@ Expected data volumes:
 ![Looker Studio Dashboard](screenshot/looker_dashboard.png)
 *Interactive dashboard displaying key business metrics and analytics*
 
+## 📊 Business Analytics
+
+### Key Analytics Queries
+
+The `analytics.sql` file contains essential business intelligence queries for operational insights:
+
+#### 1. **Store Performance Analysis**
+```sql
+-- Total sales revenue per store
+SELECT
+  s.store_id,
+  s.address,
+  s.city,
+  COALESCE(SUM(o.total_amount), 0) AS total_sales
+FROM stores s
+LEFT JOIN orders o ON s.store_id = o.store_id
+GROUP BY s.store_id, s.address, s.city
+ORDER BY total_sales DESC;
+```
+
+#### 2. **Customer Lifetime Value**
+```sql
+-- Top 10 most valuable customers (by total spending)
+SELECT
+  c.customer_id,
+  c.first_name || ' ' || c.last_name AS customer_name,
+  c.email,
+  COALESCE(SUM(o.total_amount), 0) AS total_spent,
+  COUNT(o.order_id) AS num_orders
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, customer_name, c.email
+ORDER BY total_spent DESC
+LIMIT 10;
+```
+
+#### 3. **Product Performance**
+```sql
+-- Most popular menu item by quantity sold
+SELECT
+  mi.item_id,
+  mi.name,
+  mi.category,
+  SUM(oi.quantity) AS total_qty_sold
+FROM menu_items mi
+JOIN order_items oi ON mi.item_id = oi.item_id
+GROUP BY mi.item_id, mi.name, mi.category
+ORDER BY total_qty_sold DESC
+LIMIT 1;
+```
+
+#### 4. **Average Order Value**
+```sql
+-- Average order value
+SELECT
+  ROUND(AVG(total_amount)::numeric, 2) AS avg_order_value,
+  COUNT(order_id) AS total_orders
+FROM orders;
+```
+
+#### 5. **Operational Insights**
+```sql
+-- Busiest hours of the day for orders
+SELECT
+  EXTRACT(HOUR FROM order_timestamp) AS hour_of_day,
+  COUNT(*) AS orders_count
+FROM orders
+GROUP BY hour_of_day
+ORDER BY orders_count DESC;
+```
+
+### Analytics Procedure
+
+To run the business analytics queries:
+
+1. **Connect to your database**:
+   ```bash
+   psql -h <your-cloud-sql-ip> -U rushmore_user -d rushmore_db
+   ```
+
+2. **Execute analytics queries**:
+   ```bash
+   \i analytics.sql
+   ```
+   Or run individual queries by copying from the file
+
+3. **Query Results Summary**:
+   - **Store Performance**: Ranks stores by total revenue to identify top performers
+   - **Customer Analysis**: Lists top 10 customers by spending with order frequency
+   - **Product Insights**: Identifies the single most popular menu item by quantity
+   - **Financial Metrics**: Calculates average order value across all transactions
+   - **Operational Data**: Shows peak ordering hours for staffing optimization
+
+### Business Value
+- **Revenue Optimization**: Identify top-performing stores and products
+- **Customer Segmentation**: Target high-value customers for retention
+- **Operational Efficiency**: Optimize staffing based on peak hours
+- **Menu Engineering**: Focus on popular items and discontinue underperformers
+
 ## 📈 Data Visualization
 
 ### Looker Studio Integration
@@ -392,6 +493,7 @@ The populate script uses batch processing for efficient data insertion:
 rushmore-pizzeria-data-platform/
 ├── schema.sql              # Database schema definition
 ├── populate.py             # Data generation and insertion script
+├── analytics.sql           # Business intelligence queries
 ├── requirements.txt        # Python dependencies
 ├── .env.sample            # Environment variables template
 ├── .gitignore             # Git ignore rules
