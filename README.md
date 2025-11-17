@@ -508,7 +508,3 @@ This capstone project demonstrates proficiency in:
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
-
-**Author**: [Your Name]  
-**Date**: [Current Date]  
-**Course**: Data Engineering Capstone Project
