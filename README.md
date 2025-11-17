@@ -360,16 +360,7 @@ ORDER BY orders_count DESC;
 
 To run the business analytics queries:
 
-1. **Connect to your database**:
-   ```bash
-   psql -h <your-cloud-sql-ip> -U rushmore_user -d rushmore_db
-   ```
-
-2. **Execute analytics queries**:
-   ```bash
-   \i analytics.sql
-   ```
-   Or run individual queries by copying from the file
+Or run individual queries by copying from the file
 
 3. **Query Results Summary**:
    - **Store Performance**: Ranks stores by total revenue to identify top performers
