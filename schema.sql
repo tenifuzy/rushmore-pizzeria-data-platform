@@ -90,7 +90,7 @@ CREATE TABLE order_items (
 
 
 -- =============================
--- OPTIONAL INDEXES (Recommended)
+-- INDEXES
 -- =============================
 CREATE INDEX idx_orders_store_ts ON orders (store_id, order_timestamp);
 CREATE INDEX idx_orders_customer ON orders (customer_id);

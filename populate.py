@@ -33,12 +33,12 @@ NUM_CUSTOMERS = 1200
 NUM_ORDERS = 6000  # target orders
 AVG_ITEMS_PER_ORDER = 3
 
-fake = Faker()
-Faker.seed(42)
-random.seed(42)
+fake = Faker() # Initialize Faker
+Faker.seed(42) # For reproducibility of fake data
+random.seed(42) # For reproducibility of random choices
 
 
-def get_conn():
+def get_conn(): # Get a new database connection
     return psycopg2.connect(
         host=DB_HOST,
         port=DB_PORT,
@@ -48,36 +48,49 @@ def get_conn():
     )
 
 
-def truncate_tables(conn):
+def truncate_tables(conn): # Truncate all relevant tables and reset sequences
     with conn.cursor() as cur:
-        cur.execute("""TRUNCATE TABLE
+        cur.execute("""TRUNCATE TABLE 
             order_items, orders, item_ingredients, menu_items, ingredients, customers, stores
-            RESTART IDENTITY CASCADE;""")
-        conn.commit()
-    print("Truncated tables and reset sequences.")
+            RESTART IDENTITY CASCADE;""") # Truncate and reset IDs
+        conn.commit() # Commit changes
+    print("Truncated tables and reset sequences.") 
 
 
-def insert_stores(conn):
+def insert_stores(conn): # Insert fake stores
     stores = []
-    for _ in range(NUM_STORES):
+    for _ in range(NUM_STORES): # Generate fake store data
         stores.append((fake.street_address(), fake.city(), fake.phone_number()[:20]))
-    with conn.cursor() as cur:
-        execute_values(cur,
+    with conn.cursor() as cur: # Insert into DB
+        execute_values(cur, # Bulk insert
             "INSERT INTO stores (address, city, phone_number) VALUES %s",
-            stores
+            stores # Bulk insert
         )
         conn.commit()
-    print(f"Inserted {NUM_STORES} stores.")
+    print(f"Inserted {NUM_STORES} stores.") # Report
 
 
-def insert_ingredients(conn):
-    units = ['kg', 'g', 'liters', 'units']
+def insert_customers(conn): # Insert fake customers
+    customers = []
+    for _ in range(NUM_CUSTOMERS): # Generate fake customer data
+        customers.append((fake.first_name(), fake.last_name(), fake.email(), fake.phone_number()[:20]))
+    with conn.cursor() as cur: # Insert into DB
+        execute_values(cur, # Bulk insert
+            "INSERT INTO customers (first_name, last_name, email, phone_number) VALUES %s",
+            customers # Bulk insert
+        )
+        conn.commit()
+    print(f"Inserted {NUM_CUSTOMERS} customers.") # Report
+
+
+def insert_ingredients(conn): # Insert fake ingredients
+    units = ['kg', 'g', 'liters', 'units'] # Possible units
     ingr = []
-    for i in range(NUM_INGREDIENTS):
+    for i in range(NUM_INGREDIENTS): # Generate fake ingredient data
         name = fake.unique.word().title() + (" Cheese" if i%7==0 else "")
-        qty = round(random.uniform(10, 200), 2)
-        unit = random.choice(units)
-        ingr.append((name, qty, unit))
+        qty = round(random.uniform(10, 200), 2) # Stock quantity
+        unit = random.choice(units) # Random unit
+        ingr.append((name, qty, unit)) # Add to list
     with conn.cursor() as cur:
         execute_values(cur,
             "INSERT INTO ingredients (name, stock_quantity, unit) VALUES %s",
@@ -89,15 +102,15 @@ def insert_ingredients(conn):
 
 def insert_menu_items(conn):
     categories = ['Pizza', 'Drink', 'Side']
-    sizes = ['Small', 'Medium', 'Large', '500ml', '330ml', 'N/A']
+    sizes = ['Small', 'Medium', 'Large', '500ml', '330ml', 'N/A'] # Possible sizes
     items = []
-    for i in range(NUM_MENU_ITEMS):
+    for i in range(NUM_MENU_ITEMS): # Generate fake menu item data
         name = fake.unique.word().title() + (" Pizza" if i%2==0 else "")
         category = random.choice(categories)
         size = random.choice(sizes) if category != 'Drink' else random.choice(['500ml','330ml'])
-        items.append((name, category, size))
+        items.append((name, category, size)) # Add to list
     with conn.cursor() as cur:
-        execute_values(cur,
+        execute_values(cur, # Bulk insert
             "INSERT INTO menu_items (name, category, size) VALUES %s",
             items
         )
@@ -109,8 +122,8 @@ def map_item_ingredients(conn):
     # Create mappings: each menu item uses 3-8 ingredients
     with conn.cursor() as cur:
         cur.execute("SELECT item_id FROM menu_items")
-        item_ids = [r[0] for r in cur.fetchall()]
-        cur.execute("SELECT ingredient_id FROM ingredients")
+        item_ids = [r[0] for r in cur.fetchall()] # Get all menu item IDs
+        cur.execute("SELECT ingredient_id FROM ingredients") # Get all ingredient IDs
         ing_ids = [r[0] for r in cur.fetchall()]
 
     mappings = []
@@ -124,7 +137,7 @@ def map_item_ingredients(conn):
     with conn.cursor() as cur:
         execute_values(cur,
             "INSERT INTO item_ingredients (item_id, ingredient_id, quantity_required) VALUES %s",
-            mappings
+            mappings # Bulk insert
         )
         conn.commit()
     print(f"Inserted {len(mappings)} item_ingredient mappings.")
@@ -146,25 +159,25 @@ def insert_customers(conn):
     print(f"Inserted {NUM_CUSTOMERS} customers.")
 
 
-def create_orders(conn):
+def create_orders(conn): # Create fake orders and order items
     with conn.cursor() as cur:
         cur.execute("SELECT store_id FROM stores")
         stores = [r[0] for r in cur.fetchall()]
         cur.execute("SELECT customer_id FROM customers")
-        customers = [r[0] for r in cur.fetchall()]
-        cur.execute("SELECT item_id FROM menu_items")
-        items = [r[0] for r in cur.fetchall()]
+        customers = [r[0] for r in cur.fetchall()] # Get all customer IDs
+        cur.execute("SELECT item_id FROM menu_items") # Get all menu item IDs
+        items = [r[0] for r in cur.fetchall()] # Get all menu item IDs
 
     order_records = []
     order_items_records = []
     order_count = 0
 
-    for _ in trange(NUM_ORDERS, desc="Generating orders"):
-        customer_id = random.choice(customers)
-        store_id = random.choice(stores)
+    for _ in trange(NUM_ORDERS, desc="Generating orders"): # Generate fake orders
+        customer_id = random.choice(customers) # Random customer
+        store_id = random.choice(stores) # Random store
         num_line_items = max(1, int(random.gauss(AVG_ITEMS_PER_ORDER, 1)))
         chosen_items = random.choices(items, k=num_line_items)
-        order_timestamp = fake.date_time_this_year()
+        order_timestamp = fake.date_time_this_year() # Random timestamp
 
         order_records.append((customer_id, store_id, order_timestamp, 0.0))  # placeholder total
 

@@ -157,6 +157,71 @@ order_items (
 )
 ```
 
+## 🔐 Security & RBAC
+
+### Role-Based Access Control Implementation
+
+The system implements comprehensive RBAC with five distinct roles:
+
+#### **Role Hierarchy**
+
+1. **rushmore_admin** - Database Administrator
+   - Full database privileges
+   - Schema modifications
+   - User management
+
+2. **rushmore_manager** - Store Manager
+   - Full CRUD operations on all tables
+   - Business operations management
+   - Staff oversight capabilities
+
+3. **rushmore_staff** - Store Staff
+   - Limited operational access
+   - Read access to reference data
+   - Order processing capabilities
+
+4. **rushmore_analytics** - Business Analyst
+   - Read-only access to all tables
+   - Reporting and analytics queries
+   - No data modification rights
+
+5. **rushmore_app** - Application Service
+   - Programmatic database access
+   - Automated data processing
+   - API integration support
+
+### Security Features
+
+#### **Row Level Security (RLS)**
+- Staff users can only access orders from their assigned store
+- Managers have unrestricted access to all data
+- Context-based data filtering using store location
+
+#### **Audit Logging**
+- Complete audit trail for all data modifications
+- Tracks user actions with timestamps
+- JSON-based change tracking for before/after values
+- Automated triggers on sensitive tables
+
+#### **Password Policy**
+- Strong password requirements for all users
+- Role-based authentication
+- Secure service account management
+
+### RBAC Setup
+
+```bash
+# Apply RBAC configuration
+psql -h <host> -U <admin_user> -d rushmore_db -f rbac.sql
+```
+
+### User Context Management
+
+```sql
+-- Set user store context for RLS
+SELECT set_user_context('London');
+```
+
 ## 🚀 Setup Instructions
 
 ### Prerequisites
@@ -195,11 +260,15 @@ cp .env.sample .env
 
 5. **Create database schema**
 ```bash
-# Connect to your PostgreSQL instance and run:
 psql -h <host> -U <user> -d <database> -f schema.sql
 ```
 
-6. **Populate with sample data**
+6. **Apply RBAC security**
+```bash
+psql -h <host> -U <user> -d <database> -f rbac.sql
+```
+
+7. **Populate with sample data**
 ```bash
 python populate.py
 ```
@@ -512,6 +581,7 @@ The populate script uses batch processing for efficient data insertion:
 ```
 rushmore-pizzeria-data-platform/
 ├── schema.sql              # Database schema definition
+├── rbac.sql               # Role-based access control configuration
 ├── populate.py             # Data generation and insertion script
 ├── analytics.sql           # Business intelligence queries
 ├── requirements.txt        # Python dependencies
@@ -526,11 +596,12 @@ rushmore-pizzeria-data-platform/
 This capstone project demonstrates proficiency in:
 
 1. **Database Design**: Normalized schema design following 3NF principles
-2. **Data Engineering**: ETL processes and batch data processing
-3. **Cloud Deployment**: Google Cloud Platform services integration
-4. **Data Visualization**: Business intelligence dashboard creation
-5. **Problem Solving**: Debugging and troubleshooting production issues
-6. **Documentation**: Comprehensive project documentation and knowledge sharing
+2. **Security Implementation**: Role-based access control and audit logging
+3. **Data Engineering**: ETL processes and batch data processing
+4. **Cloud Deployment**: Google Cloud Platform services integration
+5. **Data Visualization**: Business intelligence dashboard creation
+6. **Problem Solving**: Debugging and troubleshooting production issues
+7. **Documentation**: Comprehensive project documentation and knowledge sharing
 
 ## 📄 License
 
