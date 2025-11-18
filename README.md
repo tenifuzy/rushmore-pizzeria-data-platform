@@ -18,13 +18,30 @@ A comprehensive data engineering capstone project that demonstrates the complete
 
 ## 🎯 Project Overview
 
-The Rushmore Pizzeria Data Platform is designed to handle the complete data lifecycle for a multi-location pizzeria chain. The system manages:
+### Business Context
+
+Rushmore Pizzeria has rapidly expanded beyond a small single-shop business. Their legacy system—built using a simple orders.json file—became a major bottleneck with performance issues, no multi-user support, and zero analytics capabilities.
+
+As the hired Data Engineer & Database Administrator, this project delivers a modern, scalable, cloud-hosted PostgreSQL database serving as the company's new "single source of truth." The system uses high-quality synthetic data to demonstrate performance, reliability, and analytics capabilities while protecting customer privacy.
+
+### System Capabilities
+
+The Rushmore Pizzeria Data Platform handles the complete data lifecycle for a multi-location pizzeria chain:
 
 - **Store Operations**: Multiple store locations with individual tracking
 - **Customer Management**: Customer profiles and order history
 - **Menu & Inventory**: Dynamic menu items with ingredient tracking
 - **Order Processing**: Complete order lifecycle with detailed line items
 - **Analytics**: Business intelligence through Looker Studio dashboards
+
+### Project Objectives
+
+✅ **Production-Ready Cloud PostgreSQL System:**
+- Normalized relational database model (3NF schema)
+- Cloud deployment on Google Cloud Platform (GCP)
+- Python Faker-powered ETL population script
+- 25,000+ rows of realistic, masked business data
+- Analytics queries proving database supports comprehensive reporting
 
 ## 🏗️ Architecture
 
