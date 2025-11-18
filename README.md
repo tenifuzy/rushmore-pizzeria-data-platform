@@ -332,6 +332,33 @@ Expected data volumes:
 - **Orders**: 6,000+ orders
 - **Order Items**: 18,000+ line items
 
+## 📊 Data Population
+
+### populate.py Script Overview
+
+The `populate.py` script generates realistic test data using the Faker library and implements efficient batch processing for database insertion:
+
+#### **Key Features**
+- **Environment Configuration**: Reads database credentials from `.env` file
+- **Batch Processing**: Configurable batch size (default: 500 records) for optimal performance
+- **Progress Tracking**: Visual progress bars using tqdm for long-running operations
+- **Data Relationships**: Maintains referential integrity across all tables
+- **Realistic Data**: Uses Faker to generate authentic-looking customer profiles, addresses, and timestamps
+
+#### **Data Generation Process**
+1. **Stores**: Creates 4 pizzeria locations with unique addresses and phone numbers
+2. **Ingredients**: Generates 45 ingredients with stock quantities and units (kg, g, liters, units)
+3. **Menu Items**: Creates 25 menu items across categories (Pizza, Drink, Side) with appropriate sizes
+4. **Item-Ingredient Mapping**: Each menu item uses 3-8 random ingredients with required quantities
+5. **Customers**: Generates 1,200 customer profiles with unique emails and contact information
+6. **Orders & Order Items**: Creates 6,000 orders with 3 items per order on average, calculating totals automatically
+
+#### **Performance Optimizations**
+- **Bulk Inserts**: Uses `execute_values()` for efficient batch processing
+- **Memory Management**: Processes data in configurable chunks to prevent memory overflow
+- **Transaction Management**: Commits data in batches to ensure consistency
+- **Seed Values**: Uses fixed seeds (42) for reproducible test data generation
+
 ## 📸 Screenshots & Visuals
 
 ### Database Schema Visualization
@@ -550,11 +577,13 @@ CREATE INDEX idx_orders_customer ON orders (customer_id);
 CREATE INDEX idx_order_items_item_id ON order_items (item_id);
 ```
 
-#### Batch Processing
-The populate script uses batch processing for efficient data insertion:
-- **Batch Size**: 500 records per transaction
-- **Progress Tracking**: tqdm progress bars
-- **Memory Management**: Chunked processing for large datasets
+#### Data Population Script
+The populate.py script implements efficient data generation:
+- **Faker Integration**: Realistic test data generation
+- **Batch Processing**: 500 records per transaction for optimal performance
+- **Progress Tracking**: tqdm progress bars for user feedback
+- **Relationship Management**: Maintains foreign key integrity across tables
+- **Environment Configuration**: Flexible database connection via .env file
 
 ## 🛠️ Technologies Used
 
