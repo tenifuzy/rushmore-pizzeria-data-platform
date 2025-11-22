@@ -10,38 +10,19 @@ A comprehensive data engineering capstone project that demonstrates the complete
 - [Entity Relationship Diagram (ERD)](#entity-relationship-diagram-erd)
 - [Setup Instructions](#setup-instructions)
 - [Deployment Guide](#deployment-guide)
-- [Screenshots & Visuals](#screenshots--visuals)
-- [Business Analytics](#business-analytics)
 - [Data Visualization](#data-visualization)
 - [Troubleshooting](#troubleshooting)
 - [Technologies Used](#technologies-used)
 
 ## 🎯 Project Overview
 
-### Business Context
-
-Rushmore Pizzeria has rapidly expanded beyond a small single-shop business. Their legacy system—built using a simple orders.json file—became a major bottleneck with performance issues, no multi-user support, and zero analytics capabilities.
-
-As the hired Data Engineer & Database Administrator, this project delivers a modern, scalable, cloud-hosted PostgreSQL database serving as the company's new "single source of truth." The system uses high-quality synthetic data to demonstrate performance, reliability, and analytics capabilities while protecting customer privacy.
-
-### System Capabilities
-
-The Rushmore Pizzeria Data Platform handles the complete data lifecycle for a multi-location pizzeria chain:
+The Rushmore Pizzeria Data Platform is designed to handle the complete data lifecycle for a multi-location pizzeria chain. The system manages:
 
 - **Store Operations**: Multiple store locations with individual tracking
 - **Customer Management**: Customer profiles and order history
 - **Menu & Inventory**: Dynamic menu items with ingredient tracking
 - **Order Processing**: Complete order lifecycle with detailed line items
 - **Analytics**: Business intelligence through Looker Studio dashboards
-
-### Project Objectives
-
-✅ **Production-Ready Cloud PostgreSQL System:**
-- Normalized relational database model (3NF schema)
-- Cloud deployment on Google Cloud Platform (GCP)
-- Python Faker-powered ETL population script
-- 25,000+ rows of realistic, masked business data
-- Analytics queries proving database supports comprehensive reporting
 
 ## 🏗️ Architecture
 
@@ -174,71 +155,6 @@ order_items (
 )
 ```
 
-## 🔐 Security & RBAC
-
-### Role-Based Access Control Implementation
-
-The system implements comprehensive RBAC with five distinct roles:
-
-#### **Role Hierarchy**
-
-1. **rushmore_admin** - Database Administrator
-   - Full database privileges
-   - Schema modifications
-   - User management
-
-2. **rushmore_manager** - Store Manager
-   - Full CRUD operations on all tables
-   - Business operations management
-   - Staff oversight capabilities
-
-3. **rushmore_staff** - Store Staff
-   - Limited operational access
-   - Read access to reference data
-   - Order processing capabilities
-
-4. **rushmore_analytics** - Business Analyst
-   - Read-only access to all tables
-   - Reporting and analytics queries
-   - No data modification rights
-
-5. **rushmore_app** - Application Service
-   - Programmatic database access
-   - Automated data processing
-   - API integration support
-
-### Security Features
-
-#### **Row Level Security (RLS)**
-- Staff users can only access orders from their assigned store
-- Managers have unrestricted access to all data
-- Context-based data filtering using store location
-
-#### **Audit Logging**
-- Complete audit trail for all data modifications
-- Tracks user actions with timestamps
-- JSON-based change tracking for before/after values
-- Automated triggers on sensitive tables
-
-#### **Password Policy**
-- Strong password requirements for all users
-- Role-based authentication
-- Secure service account management
-
-### RBAC Setup
-
-```bash
-# Apply RBAC configuration
-psql -h <host> -U <admin_user> -d rushmore_db -f rbac.sql
-```
-
-### User Context Management
-
-```sql
--- Set user store context for RLS
-SELECT set_user_context('London');
-```
-
 ## 🚀 Setup Instructions
 
 ### Prerequisites
@@ -277,15 +193,8 @@ cp .env.sample .env
 
 5. **Create database schema**
 ```bash
-psql -h <host> -U <user> -d <database> -f schema.sql
-```
 
-6. **Apply RBAC security**
-```bash
-psql -h <host> -U <user> -d <database> -f rbac.sql
-```
-
-7. **Populate with sample data**
+6. **Populate with sample data**
 ```bash
 python populate.py
 ```
@@ -304,7 +213,7 @@ python populate.py
 2. Configure instance:
    - **Version**: PostgreSQL 15
    - **Instance ID**: `rushmore-postgres`
-   - **Region**: Choose closest to your location
+   - **Region**: Choose closest to your location: europe-west2
    - **Machine Type**: `db-f1-micro` (for development)
 
 #### Step 3: Configure Networking
@@ -348,174 +257,6 @@ Expected data volumes:
 - **Ingredients**: 45 ingredients
 - **Orders**: 6,000+ orders
 - **Order Items**: 18,000+ line items
-
-## 📊 Data Population
-
-### populate.py Script Overview
-
-The `populate.py` script generates realistic test data using the Faker library and implements efficient batch processing for database insertion:
-
-#### **Key Features**
-- **Environment Configuration**: Reads database credentials from `.env` file
-- **Batch Processing**: Configurable batch size (default: 500 records) for optimal performance
-- **Progress Tracking**: Visual progress bars using tqdm for long-running operations
-- **Data Relationships**: Maintains referential integrity across all tables
-- **Realistic Data**: Uses Faker to generate authentic-looking customer profiles, addresses, and timestamps
-
-#### **Data Generation Process**
-1. **Stores**: Creates 4 pizzeria locations with unique addresses and phone numbers
-2. **Ingredients**: Generates 45 ingredients with stock quantities and units (kg, g, liters, units)
-3. **Menu Items**: Creates 25 menu items across categories (Pizza, Drink, Side) with appropriate sizes
-4. **Item-Ingredient Mapping**: Each menu item uses 3-8 random ingredients with required quantities
-5. **Customers**: Generates 1,200 customer profiles with unique emails and contact information
-6. **Orders & Order Items**: Creates 6,000 orders with 3 items per order on average, calculating totals automatically
-
-#### **Performance Optimizations**
-- **Bulk Inserts**: Uses `execute_values()` for efficient batch processing
-- **Memory Management**: Processes data in configurable chunks to prevent memory overflow
-- **Transaction Management**: Commits data in batches to ensure consistency
-- **Seed Values**: Uses fixed seeds (42) for reproducible test data generation
-
-## 📸 Screenshots & Visuals
-
-### Database Schema Visualization
-![Database ERD](screenshot/database_erd.png)
-*Entity Relationship Diagram showing all tables and their relationships*
-
-### Database Tables Created
-![Tables Created](screenshot/tables_created.png)
-*Successfully created database tables in PostgreSQL following the schema design*
-
-### Data Population Process
-![Data Population 1](screenshot/data_population1.png)
-*Python populate.py script successfully inserting sample data into the database*
-
-![Data Population](screenshot/data_population.png.png)
-*Additional data population process screenshot*
-
-### Database Query Results
-
-#### Stores Table
-![Stores Query](screenshot/Query-stores.png)
-*Sample data from the stores table showing pizzeria locations*
-
-#### Customers Table
-![Customers Query](screenshot/Quesry-customers.png)
-*Customer data with profiles and contact information*
-
-#### Menu Items Table
-![Menu Items Query](screenshot/Query-menu-items.png)
-*Pizza menu items with categories and sizes*
-
-#### Ingredients Table
-![Ingredients Query](screenshot/Query-ingredients.png)
-*Ingredient inventory with stock quantities and units*
-
-#### Orders Table
-![Orders Query](screenshot/Query-orders.png)
-*Order records with timestamps and total amounts*
-
-#### Item Ingredients Junction Table
-![Item Ingredients Query](screenshot/Query-item-ingredients.png)
-*Many-to-many relationship between menu items and ingredients*
-
-### Looker Studio Setup & Integration
-![Looker Setup](screenshot/looker_setup.png)
-*Looker Studio connection configuration with Google Cloud SQL PostgreSQL*
-
-### Business Intelligence Dashboard
-![Looker Studio Dashboard](screenshot/looker_dashboard.png)
-*Interactive dashboard displaying key business metrics and analytics*
-
-## 📊 Business Analytics
-
-### Key Analytics Queries
-
-The `analytics.sql` file contains essential business intelligence queries for operational insights:
-
-#### 1. **Store Performance Analysis**
-```sql
--- Total sales revenue per store
-SELECT
-  s.store_id,
-  s.address,
-  s.city,
-  COALESCE(SUM(o.total_amount), 0) AS total_sales
-FROM stores s
-LEFT JOIN orders o ON s.store_id = o.store_id
-GROUP BY s.store_id, s.address, s.city
-ORDER BY total_sales DESC;
-```
-
-#### 2. **Customer Lifetime Value**
-```sql
--- Top 10 most valuable customers (by total spending)
-SELECT
-  c.customer_id,
-  c.first_name || ' ' || c.last_name AS customer_name,
-  c.email,
-  COALESCE(SUM(o.total_amount), 0) AS total_spent,
-  COUNT(o.order_id) AS num_orders
-FROM customers c
-LEFT JOIN orders o ON c.customer_id = o.customer_id
-GROUP BY c.customer_id, customer_name, c.email
-ORDER BY total_spent DESC
-LIMIT 10;
-```
-
-#### 3. **Product Performance**
-```sql
--- Most popular menu item by quantity sold
-SELECT
-  mi.item_id,
-  mi.name,
-  mi.category,
-  SUM(oi.quantity) AS total_qty_sold
-FROM menu_items mi
-JOIN order_items oi ON mi.item_id = oi.item_id
-GROUP BY mi.item_id, mi.name, mi.category
-ORDER BY total_qty_sold DESC
-LIMIT 1;
-```
-
-#### 4. **Average Order Value**
-```sql
--- Average order value
-SELECT
-  ROUND(AVG(total_amount)::numeric, 2) AS avg_order_value,
-  COUNT(order_id) AS total_orders
-FROM orders;
-```
-
-#### 5. **Operational Insights**
-```sql
--- Busiest hours of the day for orders
-SELECT
-  EXTRACT(HOUR FROM order_timestamp) AS hour_of_day,
-  COUNT(*) AS orders_count
-FROM orders
-GROUP BY hour_of_day
-ORDER BY orders_count DESC;
-```
-
-### Analytics Procedure
-
-To run the business analytics queries:
-
-Or run individual queries by copying from the file
-
-3. **Query Results Summary**:
-   - **Store Performance**: Ranks stores by total revenue to identify top performers
-   - **Customer Analysis**: Lists top 10 customers by spending with order frequency
-   - **Product Insights**: Identifies the single most popular menu item by quantity
-   - **Financial Metrics**: Calculates average order value across all transactions
-   - **Operational Data**: Shows peak ordering hours for staffing optimization
-
-### Business Value
-- **Revenue Optimization**: Identify top-performing stores and products
-- **Customer Segmentation**: Target high-value customers for retention
-- **Operational Efficiency**: Optimize staffing based on peak hours
-- **Menu Engineering**: Focus on popular items and discontinue underperformers
 
 ## 📈 Data Visualization
 
@@ -594,13 +335,11 @@ CREATE INDEX idx_orders_customer ON orders (customer_id);
 CREATE INDEX idx_order_items_item_id ON order_items (item_id);
 ```
 
-#### Data Population Script
-The populate.py script implements efficient data generation:
-- **Faker Integration**: Realistic test data generation
-- **Batch Processing**: 500 records per transaction for optimal performance
-- **Progress Tracking**: tqdm progress bars for user feedback
-- **Relationship Management**: Maintains foreign key integrity across tables
-- **Environment Configuration**: Flexible database connection via .env file
+#### Batch Processing
+The populate script uses batch processing for efficient data insertion:
+- **Batch Size**: 500 records per transaction
+- **Progress Tracking**: tqdm progress bars
+- **Memory Management**: Chunked processing for large datasets
 
 ## 🛠️ Technologies Used
 
@@ -627,9 +366,7 @@ The populate.py script implements efficient data generation:
 ```
 rushmore-pizzeria-data-platform/
 ├── schema.sql              # Database schema definition
-├── rbac.sql               # Role-based access control configuration
 ├── populate.py             # Data generation and insertion script
-├── analytics.sql           # Business intelligence queries
 ├── requirements.txt        # Python dependencies
 ├── .env.sample            # Environment variables template
 ├── .gitignore             # Git ignore rules
@@ -642,15 +379,17 @@ rushmore-pizzeria-data-platform/
 This capstone project demonstrates proficiency in:
 
 1. **Database Design**: Normalized schema design following 3NF principles
-2. **Security Implementation**: Role-based access control and audit logging
-3. **Data Engineering**: ETL processes and batch data processing
-4. **Cloud Deployment**: Google Cloud Platform services integration
-5. **Data Visualization**: Business intelligence dashboard creation
-6. **Problem Solving**: Debugging and troubleshooting production issues
-7. **Documentation**: Comprehensive project documentation and knowledge sharing
+2. **Data Engineering**: ETL processes and batch data processing
+3. **Cloud Deployment**: Google Cloud Platform services integration
+4. **Data Visualization**: Business intelligence dashboard creation
+5. **Problem Solving**: Debugging and troubleshooting production issues
+6. **Documentation**: Comprehensive project documentation and knowledge sharing
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
+
+ 
+**Course**: Data Engineering Capstone Project
